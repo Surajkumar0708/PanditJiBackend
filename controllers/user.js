@@ -45,6 +45,7 @@ export const sendMsgToWhatsApp = async (req, res) => {
     res.send({
       message: `msg sent to ${user?.contactNumber} successfully`,
     });
+    console.log("========== msg console user", user);
   } catch (error) {
     console.log(error);
   }
