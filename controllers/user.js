@@ -25,23 +25,30 @@ export const getVisitedUser = async (req, res) => {
   }
 };
 
-const msgSend = (user) => {
-  const userContactNo = String(user.contactNumber);
-  const phones = [userContactNo];
-  const message = user.msg;
-  wbm
-    .start()
-    .then(async () => {
-      await wbm.send(phones, message);
-      await wbm.end();
-    })
-    .catch((err) => console.log(err));
+const getNumber = (userDetails) => {
+  return userDetails.map((user) => user.number);
+};
+
+const msgSend = async (user) => {
+  try {
+    const userContactNo = user.userDetails;
+    console.log("========= userContactNo", userContactNo);
+    const phones = userContactNo;
+    const message = user.msg;
+    await wbm.start({ showBrowser: true, qrCodeData: true, session: true });
+    await wbm.send(phones, message);
+    await wbm.waitQRCode();
+    await wbm.end();
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const sendMsgToWhatsApp = async (req, res) => {
   try {
     const user = req.body;
     await msgSend(user);
+
     res.send({
       message: `msg sent to ${user?.contactNumber} successfully`,
     });
