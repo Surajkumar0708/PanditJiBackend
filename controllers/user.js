@@ -1,5 +1,6 @@
 import { VisitedUser } from "../models/user.js";
 import wbm from "wbm";
+import puppeteer from "puppeteer";
 
 export const setVisitedUser = async (req, res) => {
   try {
@@ -26,6 +27,9 @@ export const getVisitedUser = async (req, res) => {
 };
 
 const msgSend = async (user) => {
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: "ws://your-browserless-instance-url/ws",
+  });
   try {
     const userContactNo = user.userDetails;
     const phones = userContactNo;
@@ -36,6 +40,8 @@ const msgSend = async (user) => {
     await wbm.end();
   } catch (err) {
     console.log(err);
+  } finally {
+    await browser.close();
   }
 };
 
